@@ -3,19 +3,28 @@
 
 namespace LogicGate;
 
+use LogicGate\Exceptions\LogicGatesCharScapeNotAllowedException;
+use LogicGate\Exceptions\LogicGatesRootWrongStringResource;
+
 class LogicGatesRoot implements iIsEvaluable
 {
     use Traits\ErrorHandler;
+    use Traits\CommonEvaluableFunction;
 
     const ARRAY_RESOURCES_REQUIRED_KEYS = [ 'next_gate', 'value'];
-
+    const ARRAY_ALLOWED_CHARACTERS_SCAPE = ['"',"'","@","#"];
     private $_iGroupAnd = 0;
     private $_aGroupAnd = [];
+    private $_char_scape = '"';
 
-    public function __construct($resource = null)
+    public function __construct ( $resource = null)
     {
-        if(is_array( $resource) ){
-            $this->_setFromArray($resource);
+        if ( is_array ( $resource ) ){
+            $this->_setFromArray ( $resource );
+        }
+        if ( is_string ( $resource ) )
+        {
+            $this->_setFromString ( $resource );
         }
     }
 
@@ -30,6 +39,28 @@ class LogicGatesRoot implements iIsEvaluable
             $gate_type = trim(strtoupper($gate['next_gate']));
         }
     }
+    private function _setFromString ( string $resource )
+    {
+        $oParsedGroup = \Common\Functions\StringParse::strToParsedGroupParenthesis($resource);
+        $this->_addFromEntity($oParsedGroup);
+    }
+    private function _addFromEntity ( $oParsedGroup , $previousGate = 'AND')
+    {
+        foreach ( $oParsedGroup as $entity )
+        {
+            if($entity instanceof \Common\Classes\ParsedEntity)
+            {
+                $this->_parseStrResource( ( string ) $entity );
+            }
+            else
+            {
+                $obj = new LogicGatesRoot();
+                $obj->_addFromEntity ( $entity );
+                $this->{'add' . $previousGate}($obj);
+            }
+        }
+    }
+
     public function AddAND( iIsEvaluable $gate) : iIsEvaluable
     {
         if ( !isset ($this->_aGroupAnd [ $this->_iGroupAnd] ) )
@@ -63,5 +94,42 @@ class LogicGatesRoot implements iIsEvaluable
     private function _checkKeysArrayResource($gate)
     {
         return count ( array_intersect(array_keys($gate), self::ARRAY_RESOURCES_REQUIRED_KEYS)) === count(self::ARRAY_RESOURCES_REQUIRED_KEYS);
+    }
+
+    private function _parseStrResource(string $resource)
+    {
+        $previousGate = 'AND';
+        while(!empty(trim($resource)))
+        {
+            preg_match('/^.+?:' . $this->_char_scape . '[^' . $this->_char_scape . ']+?' . $this->char_scape . '/i', $resource, $matches);
+            list($operator, $value) = explode(':', trim($matches[0]));
+            $value = trim($value,$this->_char_scape);
+            $this->{'add' . $previousGate}(new LogicGate($value, $operator));
+            $resource = substr($resource, strlen($matches[0]));
+            if(preg_match('/^\s+(AND|OR)\s+/i', $resource, $matches))
+            {
+                $resource = substr($resource, strlen($matches[0]));
+                $previousGate = trim($matches[1]);
+            }
+            else
+            {
+                if(!empty(trim($resource)))
+                {
+                    throw new LogicGatesRootWrongStringResource('Expect end string. Having (' . $resource .')');
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $char_scape
+     */
+    public function setCharScape(string $char_scape)
+    {
+        if(!in_array($char_scape , self::ARRAY_ALLOWED_CHARACTERS_SCAPE))
+        {
+            throw new LogicGatesCharScapeNotAllowedException();
+        }
+        $this->_char_scape = $char_scape;
     }
 }

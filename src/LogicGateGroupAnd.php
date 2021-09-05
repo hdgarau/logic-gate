@@ -6,6 +6,8 @@ namespace LogicGate;
 class LogicGateGroupAnd implements iIsEvaluable
 {
     use Traits\ErrorHandler;
+    use Traits\CommonEvaluableFunction;
+
     protected $gates = [];
     public function addGate( iIsEvaluable $gate) : iIsEvaluable
     {
