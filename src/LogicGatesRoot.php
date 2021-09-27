@@ -46,6 +46,8 @@ class LogicGatesRoot implements iIsEvaluable
     }
     private function _addFromEntity ( $oParsedGroup , $previousGate = 'AND')
     {
+        //print_r($oParsedGroup);
+
         foreach ( $oParsedGroup as $entity )
         {
             if($entity instanceof \Common\Classes\ParsedEntity)

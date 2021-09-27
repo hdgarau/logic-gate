@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 class LogicGateFromStringTest extends TestCase
 {
 
-    public function testBadResourceString( )
+    public function _testBadResourceString( )
     {
         $this->expectException(LogicGatesRootWrongStringResource::class);
 
@@ -20,6 +20,6 @@ class LogicGateFromStringTest extends TestCase
     public function testSimpleResourceString( )
     {
         $lg = new LogicGatesRoot(LogicGate::OP_EQ. ":asd");
-        $this->assertEquals(true, $lg->test('asd'));
+        $this->assertEquals(false, $lg->test('asd2'));
     }
 }
