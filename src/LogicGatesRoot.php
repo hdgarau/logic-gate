@@ -46,11 +46,10 @@ class LogicGatesRoot implements iIsEvaluable
     }
     private function _addFromEntity ( $oParsedGroup , $previousGate = 'AND')
     {
-        //print_r($oParsedGroup);
 
-        foreach ( $oParsedGroup as $entity )
+        foreach ( $oParsedGroup->getEntities() as $entity )
         {
-            if($entity instanceof \Common\Classes\ParsedEntity)
+            if($entity instanceof \Common\Classes\Parse\ParsedEntity)
             {
                 $this->_parseStrResource( ( string ) $entity );
             }
@@ -103,7 +102,7 @@ class LogicGatesRoot implements iIsEvaluable
         $previousGate = 'AND';
         while(!empty(trim($resource)))
         {
-            preg_match('/^.+?:' . $this->_char_scape . '[^' . $this->_char_scape . ']+?' . $this->char_scape . '/i', $resource, $matches);
+            preg_match('/^.+?:' . $this->_char_scape . '[^' . $this->_char_scape . ']+?' . $this->_char_scape . '/i', $resource, $matches);
             list($operator, $value) = explode(':', trim($matches[0]));
             $value = trim($value,$this->_char_scape);
             $this->{'add' . $previousGate}(new LogicGate($value, $operator));
@@ -124,14 +123,14 @@ class LogicGatesRoot implements iIsEvaluable
     }
 
     /**
-     * @param string $char_scape
+     * @param string $_char_scape
      */
-    public function setCharScape(string $char_scape)
+    public function setCharScape(string $_char_scape)
     {
-        if(!in_array($char_scape , self::ARRAY_ALLOWED_CHARACTERS_SCAPE))
+        if(!in_array($_char_scape , self::ARRAY_ALLOWED_CHARACTERS_SCAPE))
         {
             throw new LogicGatesCharScapeNotAllowedException();
         }
-        $this->_char_scape = $char_scape;
+        $this->_char_scape = $_char_scape;
     }
 }
