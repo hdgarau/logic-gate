@@ -7,6 +7,7 @@ use Throwable;
 class LogicGate implements iIsEvaluable
 {
     use Traits\ErrorHandler;
+    use Traits\CommonEvaluableFunction;
 
     const OP_EQ = '=';
     const OP_GT = '>';
@@ -32,7 +33,7 @@ class LogicGate implements iIsEvaluable
     {
         $this->value = $value;
     }
-    public function testWith (string $value, $operator ) : bool
+    public function testWith ( $value, $operator ) : bool
     {
         $this->orFail ( $this->_checkOperator($operator), new Exceptions\LogicGatesWrongOperatorException($operator) );
         if (is_callable($operator))
@@ -50,10 +51,10 @@ class LogicGate implements iIsEvaluable
             case self::OP_REGEX :
                 return $this->_testRegex($value);
             default :
-                $this->_fail(new \Exception("Operación no definida"));
+                $this->_fail(new \Exception("ERROR OP001"));
         }
     }
-    public function test ( $value) : bool
+    public function test ( $value ) : bool
     {
         return $this->testWith($value, $this->op_default);
     }

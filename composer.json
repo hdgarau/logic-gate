@@ -12,6 +12,7 @@
         }
     ],
     "require": {
+        "hdgarau/common": "^1.0"
     },
 	
     "autoload": {
