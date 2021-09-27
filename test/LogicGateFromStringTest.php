@@ -19,7 +19,7 @@ class LogicGateFromStringTest extends TestCase
     }
     public function testSimpleResourceString( )
     {
-        $lg = new LogicGatesRoot(LogicGate::OP_EQ. ":asd");
+        $lg = new LogicGatesRoot(LogicGate::OP_EQ. ':"asd"');
         $this->assertEquals(false, $lg->test('asd2'));
     }
 }
