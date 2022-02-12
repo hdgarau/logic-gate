@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use \LogicGate\LogicGate;
-use \LogicGate\LogicGatesRoot;
-use \LogicGate\Exceptions\LogicGatesRootWrongArrayKeysException;
-use \LogicGate\Exceptions\LogicGatesRootWrongGateTypeException;
+use LogicGate\LogicGate;
+use LogicGate\LogicGatesRoot;
+use LogicGate\Exceptions\LogicGatesRootWrongArrayKeysException;
+use LogicGate\Exceptions\LogicGatesRootWrongGateTypeException;
 use PHPUnit\Framework\TestCase;
 
 class LogicGateRootTest extends TestCase

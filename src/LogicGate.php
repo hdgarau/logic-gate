@@ -1,7 +1,7 @@
 <?php
 
 namespace LogicGate;
-use Throwable;
+use Exception;
 
 
 class LogicGate implements iIsEvaluable
@@ -51,7 +51,8 @@ class LogicGate implements iIsEvaluable
             case self::OP_REGEX :
                 return $this->_testRegex($value);
             default :
-                $this->_fail(new \Exception("ERROR OP001"));
+                $this->_fail(new Exception("ERROR OP001"));
+                return false;
         }
     }
     public function test ( $value ) : bool
@@ -62,15 +63,15 @@ class LogicGate implements iIsEvaluable
     {
         return  is_callable($operator ) || in_array( $operator, self::OPERATIONS_ALLOWED);
     }
-    private function _testEQ(string $value)
+    private function _testEQ(string $value) : bool
     {
         return $value == $this->value;
     }
-    private function _testGT(string $value)
+    private function _testGT(string $value): bool
     {
         return $value > $this->value;
     }
-    private function _testLT(string $value)
+    private function _testLT(string $value): bool
     {
         return $value < $this->value;
     }

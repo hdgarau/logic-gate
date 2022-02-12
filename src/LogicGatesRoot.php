@@ -3,6 +3,9 @@
 
 namespace LogicGate;
 
+use Common\Classes\Parse\ParsedEntity;
+use Common\Functions\StringParse;
+use Exception;
 use LogicGate\Exceptions\LogicGatesCharScapeNotAllowedException;
 use LogicGate\Exceptions\LogicGatesRootWrongStringResource;
 
@@ -35,13 +38,13 @@ class LogicGatesRoot implements iIsEvaluable
             $this->orFail( $this->_checkKeysArrayResource($gate) , new Exceptions\LogicGatesRootWrongArrayKeysException());
             $gate_type = isset($gate_type) && !empty($gate_type) ? $gate_type : 'AND' ;
             $this->orFail( $gate_type == 'AND' || $gate_type == 'OR', new Exceptions\LogicGatesRootWrongGateTypeException($gate_type));
-            $this->{'Add' . $gate_type }(new LogicGate( $gate['value'], isset($gate['operator']) ? $gate['operator'] : LogicGate::OP_DEFAULT ));
+            $this->{'Add' . $gate_type }(new LogicGate( $gate['value'], $gate['operator'] ?? LogicGate::OP_DEFAULT));
             $gate_type = trim(strtoupper($gate['next_gate']));
         }
     }
     private function _setFromString ( string $resource )
     {
-        $oParsedGroup = \Common\Functions\StringParse::strToParsedGroupParenthesis($resource);
+        $oParsedGroup = StringParse::strToParsedGroupParenthesis($resource);
         $this->_addFromEntity($oParsedGroup);
     }
     private function _addFromEntity ( $oParsedGroup , $previousGate = 'AND')
@@ -49,7 +52,7 @@ class LogicGatesRoot implements iIsEvaluable
 
         foreach ( $oParsedGroup->getEntities() as $entity )
         {
-            if($entity instanceof \Common\Classes\Parse\ParsedEntity)
+            if($entity instanceof ParsedEntity)
             {
                 $this->_parseStrResource( ( string ) $entity );
             }
@@ -92,7 +95,7 @@ class LogicGatesRoot implements iIsEvaluable
         return false;
     }
 
-    private function _checkKeysArrayResource($gate)
+    private function _checkKeysArrayResource($gate): bool
     {
         return count ( array_intersect(array_keys($gate), self::ARRAY_RESOURCES_KEYS_REQUIRED)) === count(self::ARRAY_RESOURCES_KEYS_REQUIRED);
     }
@@ -110,7 +113,7 @@ class LogicGatesRoot implements iIsEvaluable
             try {
                 list($operator, $value) = explode(':', trim($matches[0]));
             }
-            catch (\Exception $e){
+            catch (Exception $e){
                 print_r($resource);
                 die();
             }

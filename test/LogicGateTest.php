@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use \LogicGate\LogicGate;
-use \LogicGate\Exceptions\LogicGatesWrongOperatorException;
+use LogicGate\LogicGate;
+use LogicGate\Exceptions\LogicGatesWrongOperatorException;
 use PHPUnit\Framework\TestCase;
 
 class LogicGateTest extends TestCase

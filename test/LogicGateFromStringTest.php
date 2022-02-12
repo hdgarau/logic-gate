@@ -52,12 +52,12 @@ class LogicGateFromStringTest extends TestCase
     public function testChildComplexResourceString( )
     {
 
-        $lg = new LogicGatesRoot('(' . LogicGate::OP_REGEX . ':"2$" OR ' . LogicGate::OP_REGEX . ':"comodin") '.
-            'AND (' . LogicGate::OP_REGEX . ':"1" OR ' . LogicGate::OP_EQ . ':"comodin21")');
-        $this->assertEquals(true, $lg->test('comodin21'));
-        $this->assertEquals(false, $lg->test('comodin22'));
-        $this->assertEquals(true, $lg->test('comodin103'));
-        $this->assertEquals(true, $lg->test('12'));
-        $this->assertEquals(false, $lg->test('21'));
+        $lg = new LogicGatesRoot( LogicGate::OP_REGEX . ':"2$" AND (' . LogicGate::OP_REGEX . ':"comodin" OR ' .LogicGate::OP_REGEX . ':"rock" '.
+            'AND (' . LogicGate::OP_REGEX . ':"\\d\\d" OR ' . LogicGate::OP_REGEX . ':"[*!-]"))');
+        $this->assertEquals(false, $lg->test('comodin21'));
+        $this->assertEquals(true, $lg->test('comodin22'));
+        $this->assertEquals(true, $lg->test('rock1032'));
+        $this->assertEquals(true, $lg->test('rock!2'));
+        $this->assertEquals(false, $lg->test('rock2'));
     }
 }
