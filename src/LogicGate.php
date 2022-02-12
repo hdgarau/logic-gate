@@ -14,7 +14,7 @@ class LogicGate implements iIsEvaluable
     const OP_LT = '<';
     const OP_REGEX = '~';
     const OP_DEFAULT = self::OP_REGEX;
-    const OPERATIONS_ALLOW = [ self::OP_EQ , self::OP_GT, self::OP_LT , self::OP_REGEX ];
+    const OPERATIONS_ALLOWED = [ self::OP_EQ , self::OP_GT, self::OP_LT , self::OP_REGEX ];
 
     protected $op_default = null;
     public $value;
@@ -60,7 +60,7 @@ class LogicGate implements iIsEvaluable
     }
     private function _checkOperator( $operator) :bool
     {
-        return  is_callable($operator ) || in_array( $operator, self::OPERATIONS_ALLOW);
+        return  is_callable($operator ) || in_array( $operator, self::OPERATIONS_ALLOWED);
     }
     private function _testEQ(string $value)
     {

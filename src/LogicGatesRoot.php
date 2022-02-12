@@ -11,8 +11,8 @@ class LogicGatesRoot implements iIsEvaluable
     use Traits\ErrorHandler;
     use Traits\CommonEvaluableFunction;
 
-    const ARRAY_RESOURCES_REQUIRED_KEYS = [ 'next_gate', 'value'];
-    const ARRAY_ALLOWED_CHARACTERS_SCAPE = ['"',"'","@","#"];
+    const ARRAY_RESOURCES_KEYS_REQUIRED = [ 'next_gate', 'value'];
+    const ARRAY_CHARACTERS_SCAPE_ALLOWED = ['"',"'","@","#"];
     private $_iGroupAnd = 0;
     private $_aGroupAnd = [];
     private $_char_scape = '"';
@@ -94,16 +94,26 @@ class LogicGatesRoot implements iIsEvaluable
 
     private function _checkKeysArrayResource($gate)
     {
-        return count ( array_intersect(array_keys($gate), self::ARRAY_RESOURCES_REQUIRED_KEYS)) === count(self::ARRAY_RESOURCES_REQUIRED_KEYS);
+        return count ( array_intersect(array_keys($gate), self::ARRAY_RESOURCES_KEYS_REQUIRED)) === count(self::ARRAY_RESOURCES_KEYS_REQUIRED);
     }
 
     private function _parseStrResource(string $resource)
     {
         $previousGate = 'AND';
+        if(trim($resource) == 'AND' || trim($resource) == 'OR')
+        {
+            return;
+        }
         while(!empty(trim($resource)))
         {
             preg_match('/^.+?:' . $this->_char_scape . '[^' . $this->_char_scape . ']+?' . $this->_char_scape . '/i', $resource, $matches);
-            list($operator, $value) = explode(':', trim($matches[0]));
+            try {
+                list($operator, $value) = explode(':', trim($matches[0]));
+            }
+            catch (\Exception $e){
+                print_r($resource);
+                die();
+            }
             $value = trim($value,$this->_char_scape);
             $this->{'add' . $previousGate}(new LogicGate($value, $operator));
             $resource = substr($resource, strlen($matches[0]));
@@ -127,7 +137,7 @@ class LogicGatesRoot implements iIsEvaluable
      */
     public function setCharScape(string $_char_scape)
     {
-        if(!in_array($_char_scape , self::ARRAY_ALLOWED_CHARACTERS_SCAPE))
+        if(!in_array($_char_scape , self::ARRAY_CHARACTERS_SCAPE_ALLOWED))
         {
             throw new LogicGatesCharScapeNotAllowedException();
         }
