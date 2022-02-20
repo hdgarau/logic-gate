@@ -112,6 +112,16 @@ class LogicGatesRoot implements iIsEvaluable
             preg_match('/^.+?:' . $this->_char_scape . '[^' . $this->_char_scape . ']+?' . $this->_char_scape . '/i', $resource, $matches);
             try {
                 list($operator, $value) = explode(':', trim($matches[0]));
+                if(strtoupper(substr($operator,0,3)) == 'OR ')
+                {
+                    $previousGate = 'OR';
+                    $operator = trim(substr($operator,3));
+                }
+                if(strtoupper(substr($operator,0,4) == 'AND '))
+                {
+                    $previousGate = 'AND';
+                    $operator = trim(substr($operator,4));
+                }
             }
             catch (Exception $e){
                 print_r($resource);
